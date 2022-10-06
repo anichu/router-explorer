@@ -1,25 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./components/home/Home";
+import About from "./components/about/About";
+import Products from "./components/products/Products";
+import Main from "./layout/Main";
+import Friends from "./components/friends/Friends";
+import FriendDetails from "./components/friendDetails/FriendDetails";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const router = createBrowserRouter([
+		{
+			path: "/",
+			element: <Main />,
+			children: [
+				{
+					path: "home",
+					element: <Home />,
+				},
+				{
+					path: "about",
+					element: <About />,
+				},
+				{
+					path: "products",
+					element: <Products />,
+				},
+				{
+					path: "friends",
+					loader: async () => {
+						return await fetch("https://jsonplaceholder.typicode.com/users");
+					},
+					element: <Friends />,
+				},
+				{
+					path: "/friend/:friendId",
+					loader: async ({ params }) => {
+						return fetch(
+							`https://jsonplaceholder.typicode.com/users/${params.friendId}`
+						);
+					},
+					element: <FriendDetails />,
+				},
+			],
+		},
+		{
+			path: "*",
+			element: <div>this is page is not found😪😪</div>,
+		},
+	]);
+
+	return (
+		<div className="">
+			<RouterProvider router={router}></RouterProvider>
+		</div>
+	);
 }
 
 export default App;
